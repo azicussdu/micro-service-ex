@@ -52,7 +52,7 @@ func RegisterRoutes(router *gin.Engine, gatewayHandler *GatewayHandler, authMidd
 }
 
 func (h *GatewayHandler) ProxyAuth(c *gin.Context) {
-	// ИТОГ: targetURL = http://user-service:8080/auth/login (api удалили)
+	// ИТОГ: targetURL = http://user-service:8081/auth/login (api удалили)
 	targetURL := h.config.UserServiceURL + strings.TrimPrefix(c.Request.URL.Path, "/api")
 	h.forwardRequest(c, targetURL, func(request *http.Request) {})
 }
@@ -111,7 +111,7 @@ func (h *GatewayHandler) forwardRequest(c *gin.Context, targetURL string, mutate
 
 	// Устанавливает HTTP-статус ответа - такой же, как вернул внутренний сервис.
 	c.Status(response.StatusCode)
-	// io.Copy - читает из response.Body и пишет в c.Writer
+	// io.Copy - читает из response.Body и пишет в c.Writer (а когда ты пишешь в c.Writer то ответ уходит в браузер)
 	if _, err := io.Copy(c.Writer, response.Body); err != nil {
 		c.Abort()
 	}

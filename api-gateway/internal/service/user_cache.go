@@ -32,7 +32,7 @@ func NewUserCacheService(redisClient *redis.Client, cfg config.Config) *UserCach
 
 // Метод который возвращает пользователя по ID (из кэша или из сервиса).
 func (s *UserCacheService) GetOrFetchUser(ctx context.Context, userID uint) (*types.User, error) {
-	cacheKey := fmt.Sprintf("user:%d", userID) // ключ для redis
+	cacheKey := fmt.Sprintf("user:%d", userID) // ключ для redis user:1 -> {id:1, email...}
 	cachedUser, err := s.redisClient.Get(ctx, cacheKey).Result()
 	if err == nil {
 		var user types.User
