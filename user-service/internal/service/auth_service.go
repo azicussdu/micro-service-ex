@@ -2,7 +2,9 @@ package service
 
 import (
 	"errors"
+	"log"
 
+	"user-service/internal/events"
 	"user-service/internal/model"
 	"user-service/internal/repository"
 
@@ -15,12 +17,14 @@ var ErrInvalidCredentials = errors.New("invalid credentials")
 type AuthService struct {
 	userRepository *repository.UserRepository
 	tokenService   *TokenService
+	publisher      *events.Publisher
 }
 
-func NewAuthService(userRepository *repository.UserRepository, tokenService *TokenService) *AuthService {
+func NewAuthService(userRepository *repository.UserRepository, tokenService *TokenService, publisher *events.Publisher) *AuthService {
 	return &AuthService{
 		userRepository: userRepository,
 		tokenService:   tokenService,
+		publisher:      publisher,
 	}
 }
 
@@ -37,6 +41,15 @@ func (s *AuthService) Register(email, password string) (*model.User, error) {
 
 	if err := s.userRepository.Create(user); err != nil {
 		return nil, err
+	}
+
+	if s.publisher != nil {
+		if err := s.publisher.Publish("user.created", map[string]interface{}{
+			"id":    user.ID,
+			"email": user.Email,
+		}); err != nil {
+			log.Printf("failed to publish user.created event: %v", err)
+		}
 	}
 
 	return user, nil

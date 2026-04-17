@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"order-service/internal/config"
+	"order-service/internal/events"
 	"order-service/internal/handler"
 	"order-service/internal/model"
 	"order-service/internal/repository"
@@ -22,7 +23,10 @@ func main() {
 	}
 
 	orderRepository := repository.NewOrderRepository(db)
-	orderService := service.NewOrderService(orderRepository)
+	publisher := events.NewPublisher()
+	defer publisher.Close()
+
+	orderService := service.NewOrderService(orderRepository, publisher)
 
 	router := gin.Default()
 	handler.RegisterRoutes(router, cfg, orderService)

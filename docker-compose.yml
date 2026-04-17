@@ -54,6 +54,18 @@ services:
     ports:
       - "8082:8082"
 
+  kitchen-service:
+    build: ./kitchen-service
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  notification-service:
+    build: ./notification-service
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
   postgres-user:
     image: postgres:16-alpine
     container_name: postgres-user
@@ -101,6 +113,20 @@ services:
       - "6379:6379"
     volumes:
       - redis-data:/data
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    healthcheck:
+      test: [ "CMD", "rabbitmq-diagnostics", "check_port_connectivity" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 volumes:
   postgres-user-data:

@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"user-service/internal/config"
+	"user-service/internal/events"
 	"user-service/internal/handler"
 	"user-service/internal/model"
 	"user-service/internal/repository"
@@ -23,7 +24,9 @@ func main() {
 
 	userRepository := repository.NewUserRepository(db)
 	tokenService := service.NewTokenService(cfg.JWTSecret)
-	authService := service.NewAuthService(userRepository, tokenService)
+	publisher := events.NewPublisher()
+	defer publisher.Close()
+	authService := service.NewAuthService(userRepository, tokenService, publisher)
 
 	router := gin.Default()
 	handler.RegisterRoutes(router, cfg, authService)
