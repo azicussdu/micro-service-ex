@@ -2,8 +2,7 @@ version: "3.9"
 
 services:
   api-gateway:
-    build:
-      context: ./api-gateway
+    image: ghcr.io/azicussdu/api-gateway:sha-e3fbf1a
     container_name: api-gateway
     depends_on:
       redis:
@@ -26,8 +25,7 @@ services:
       - "8080:8080"
 
   user-service:
-    build:
-      context: ./user-service
+    image: ghcr.io/azicussdu/user-service:sha-e3fbf1a
     container_name: user-service
     depends_on:
       postgres-user:
@@ -41,8 +39,7 @@ services:
       - "8081:8081"
 
   order-service:
-    build:
-      context: ./order-service
+    image: ghcr.io/azicussdu/order-service:sha-e3fbf1a
     container_name: order-service
     depends_on:
       postgres-order:
