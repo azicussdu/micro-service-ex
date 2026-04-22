@@ -53,5 +53,5 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
             cd /home/ubuntu
-            sudo docker-compose pull
-            sudo docker-compose up -d --remove-orphans
+            sudo docker compose pull
+            sudo docker compose up -d --remove-orphans
