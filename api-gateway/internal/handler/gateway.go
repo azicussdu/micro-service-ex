@@ -31,7 +31,7 @@ func NewGatewayHandler(cfg config.Config) *GatewayHandler {
 
 func RegisterRoutes(router *gin.Engine, gatewayHandler *GatewayHandler, authMiddleware *middleware.AuthMiddleware) {
 	router.GET("/healthz", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"status": "Emaaa"})
+		c.JSON(http.StatusOK, gin.H{"status": "Ok"})
 	})
 
 	api := router.Group("/api")
